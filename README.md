@@ -6,6 +6,6 @@
 ## Usage
 If you launch with no arguments, you will be prompted to enter the code you want to execute.
 
-If you launch with the arguments "--file [path]", thislang will attempt to read and execute the file.(pathes only without spaces for now due to coder issue)
+If you launch with the arguments "--file [path]", thislang will attempt to read and execute the file(pathes without spaces for now due to coder issue).
 
 If you launch with the arguments "--code [code]", thislang will execute [code].
