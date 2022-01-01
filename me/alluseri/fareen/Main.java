@@ -23,13 +23,20 @@ public class Main {
 				code = args[1];
 				break;
 			case "--file":
-				File f = new File(args[1]);
-				if (!f.exists() || f.isDirectory() || !f.canRead() || !f.getName().endsWith(".this")) code = fallback(s);
+				StringBuilder sb = new StringBuilder();
+				for (int i = 1;i < args.length;i++)
+					sb.append(args[i]);
+				File f = new File(sb.toString());
+				if (!f.exists() || f.isDirectory() || !f.canRead()) {
+					code = fallback(s);
+					break;
+				}
 				try (BufferedReader fr = new BufferedReader(new FileReader(f))) { // Shouldn't throw FNFE cuz f.exists() check
 					code = fr.readLine();
 				} catch (IOException e1) {
 					System.out.println("An error has occured while reading your input file:");
 					e1.printStackTrace();
+					s.close();
 					return;
 				}
 				break;
@@ -44,6 +51,7 @@ public class Main {
 			return;
 		}
 		System.out.println("Executing "+code+"\n");
+		String[] spl = code.split("");
 		for (int e = 0; e < code.length();) {
 			switch (code.toCharArray()[e]) {
 			case '0':
@@ -61,22 +69,22 @@ public class Main {
 				cells[cell]--;
 				break;
 			case '5': { // Jump to execution index at next (e+1) numbers
-				int next = Integer.parseInt(code.split("")[++e]);
+				int next = Integer.parseInt(spl[++e]);
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < next; i++)
-					sb.append(code.split("")[++e]);
+					sb.append(spl[++e]);
 				e = Integer.parseInt(sb.toString());
 			} continue;
 			case '6': { // If current memory cell == value at next (e+1) numbers, jump at execution index at next (e+2) numbers after (e+1) numbers
-				int next_mem = Integer.parseInt(code.split("")[++e]);
-				int next_exec = Integer.parseInt(code.split("")[++e]);
+				int next_mem = Integer.parseInt(spl[++e]);
+				int next_exec = Integer.parseInt(spl[++e]);
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < next_mem; i++)
-					sb.append(code.split("")[++e]);
+					sb.append(spl[++e]);
 				int requestedValue = Integer.parseInt(sb.toString());
 				sb.setLength(0);
 				for (int i = 0; i < next_exec; i++)
-					sb.append(code.split("")[++e]);
+					sb.append(spl[++e]);
 				int jumpTarget = Integer.parseInt(sb.toString());
 				sb = null;
 				if (cells[cell] == requestedValue) {
@@ -85,15 +93,15 @@ public class Main {
 				}
 			} break;
 			case '7': { // If current memory cell != value at next (e+1) numbers, jump at execution index at next (e+2) numbers after (e+1) numbers
-				int next_mem = Integer.parseInt(code.split("")[++e]);
-				int next_exec = Integer.parseInt(code.split("")[++e]);
+				int next_mem = Integer.parseInt(spl[++e]);
+				int next_exec = Integer.parseInt(spl[++e]);
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < next_mem; i++)
-					sb.append(code.split("")[++e]);
+					sb.append(spl[++e]);
 				int requestedValue = Integer.parseInt(sb.toString());
 				sb.setLength(0);
 				for (int i = 0; i < next_exec; i++)
-					sb.append(code.split("")[++e]);
+					sb.append(spl[++e]);
 				int jumpTarget = Integer.parseInt(sb.toString());
 				sb = null;
 				if (cells[cell] != requestedValue) {
